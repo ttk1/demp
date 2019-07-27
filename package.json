@@ -2,9 +2,10 @@
   "name": "demp",
   "version": "1.0.0",
   "description": "WebGLでDEM法を実装して、流体のシミュレーションがしたい！",
-  "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "webpack-dev-server --mode=development",
+    "dist": "webpack --mode=production"
   },
   "repository": {
     "type": "git",
