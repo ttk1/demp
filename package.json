@@ -1,0 +1,31 @@
+{
+  "name": "demp",
+  "version": "1.0.0",
+  "description": "WebGLでDEM法を実装して、流体のシミュレーションがしたい！",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ttk1/demp.git"
+  },
+  "author": "tama",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ttk1/demp/issues"
+  },
+  "homepage": "https://github.com/ttk1/demp#readme",
+  "devDependencies": {
+    "@types/webgl2": "0.0.5",
+    "glslify": "^7.0.0",
+    "glslify-loader": "^2.0.0",
+    "raw-loader": "^3.1.0",
+    "ts-loader": "^6.0.4",
+    "tslint": "^5.18.0",
+    "typescript": "^3.5.3",
+    "webpack": "^4.38.0",
+    "webpack-cli": "^3.3.6",
+    "webpack-dev-server": "^3.7.2"
+  }
+}

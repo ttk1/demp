@@ -3,5 +3,10 @@
 		{
 			"path": "."
 		}
-	]
+	],
+	"settings": {
+		"terminal.integrated.env.windows": {
+			"PATH": "${env:PATH};${workspaceRoot}\\node_modules\\.bin"
+		}
+	}
 }
