@@ -72,7 +72,6 @@ function getShaderObject(gl: WebGLRenderingContext, type: number, shaderSource: 
         throw new Error('ShaderObject作成失敗');
     }
     gl.shaderSource(so, shaderSource);
-
     gl.compileShader(so);
     if (!gl.getShaderParameter(so, gl.COMPILE_STATUS)) {
         throw new Error('コンパイル失敗: ' + gl.getShaderInfoLog(so));
