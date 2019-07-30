@@ -1,7 +1,7 @@
 #version 300 es
 precision mediump float;
-in vec3 color;
-out vec3 outColor;
+in vec4 color;
+out vec4 outColor;
 void main(void) {
     outColor = color;
 }
