@@ -4,9 +4,9 @@ window.onload = () => {
         throw new Error('containerの取得失敗');
     }
 
-    const WIDTH = 500;
-    const HEIGHT = 500;
-    const canvas = createCanvas(container, WIDTH, HEIGHT);
+    const width = 500;
+    const height = 500;
+    const canvas = createCanvas(container, width, height);
     const gl = getGLContext(canvas);
 
     // オフスクリーンレンダリングした結果をテクスチャに出力
@@ -14,7 +14,7 @@ window.onload = () => {
     gl.useProgram(sp1);
     setAttributes(gl, sp1);
     const fb = createFrameBuffer(gl);
-    const tx = createTexture(gl, WIDTH, HEIGHT);
+    const tx = createTexture(gl, width, height);
     gl.bindFramebuffer(gl.FRAMEBUFFER, fb);
     gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, tx, 0);
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
@@ -25,8 +25,8 @@ window.onload = () => {
     gl.useProgram(sp2);
     setAttributes(gl, sp2);
     gl.bindTexture(gl.TEXTURE_2D, tx);
-    gl.uniform1f(gl.getUniformLocation(sp2, 'width'), canvas.width);
-    gl.uniform1f(gl.getUniformLocation(sp2, 'height'), canvas.height);
+    gl.uniform1f(gl.getUniformLocation(sp2, 'width'), width);
+    gl.uniform1f(gl.getUniformLocation(sp2, 'height'), height);
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 };
 
