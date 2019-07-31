@@ -25,8 +25,6 @@ window.onload = () => {
     gl.useProgram(sp2);
     setAttributes(gl, sp2);
     gl.bindTexture(gl.TEXTURE_2D, tx);
-    gl.uniform1f(gl.getUniformLocation(sp2, 'width'), width);
-    gl.uniform1f(gl.getUniformLocation(sp2, 'height'), height);
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 };
 
