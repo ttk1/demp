@@ -10,9 +10,9 @@ window.onload = () => {
     const gl = getGLContext(canvas);
 
     // オフスクリーンレンダリングした結果をテクスチャに出力
-    const sp1 = getShaderProgram(gl, 1);
+    const sp1 = getShaderProgram(gl, 1, []);
     gl.useProgram(sp1);
-    setAttributes(gl, sp1);
+    // setAttributes(gl, sp1);
     const fb = createFrameBuffer(gl);
     const tx = createTexture(gl, width, height);
     gl.bindFramebuffer(gl.FRAMEBUFFER, fb);
@@ -21,7 +21,7 @@ window.onload = () => {
     gl.bindFramebuffer(gl.FRAMEBUFFER, null);
 
     // 上で作成したテクスチャを描画
-    const sp2 = getShaderProgram(gl, 2);
+    const sp2 = getShaderProgram(gl, 2, []);
     gl.useProgram(sp2);
     setAttributes(gl, sp2);
     gl.bindTexture(gl.TEXTURE_2D, tx);
@@ -50,13 +50,14 @@ function getGLContext(canvas: HTMLCanvasElement): WebGL2RenderingContext {
     return gl;
 }
 
-function getShaderProgram(gl: WebGL2RenderingContext, programId: number): WebGLProgram {
+function getShaderProgram(gl: WebGL2RenderingContext, programId: number, tfVaryings: string[]): WebGLProgram {
     const sp = gl.createProgram();
     if (!sp) {
         throw new Error('ShaderProgram作成失敗');
     }
     gl.attachShader(sp, getShaderObject(gl, gl.VERTEX_SHADER, require(`./glsl/${programId}/vert.glsl`).default));
     gl.attachShader(sp, getShaderObject(gl, gl.FRAGMENT_SHADER, require(`./glsl/${programId}/frag.glsl`).default));
+    gl.transformFeedbackVaryings(sp, tfVaryings, gl.SEPARATE_ATTRIBS);
     gl.linkProgram(sp);
     if (!gl.getProgramParameter(sp, gl.LINK_STATUS)) {
         throw new Error('リンク失敗');
@@ -72,7 +73,8 @@ function getShaderObject(gl: WebGLRenderingContext, type: number, shaderSource: 
     gl.shaderSource(so, shaderSource);
     gl.compileShader(so);
     if (!gl.getShaderParameter(so, gl.COMPILE_STATUS)) {
-        throw new Error('コンパイル失敗: ' + gl.getShaderInfoLog(so));
+        throw new Error('コンパイル失敗: ' + gl.getShaderInfoLog(so) +
+        ', shaderSource: ' + shaderSource);
     }
     return so;
 }
