@@ -9,23 +9,60 @@ window.onload = () => {
     const canvas = createCanvas(container, width, height);
     const gl = getGLContext(canvas);
 
-    // オフスクリーンレンダリングした結果をテクスチャに出力
+    // 書き込む元のデータ
+    const original: number[] = [0.1, 0.2, 0.3, 0.4];
+
+    // vboにデータの書き込み
+    const vbo = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(original), gl.STATIC_DRAW);
+    gl.bindBuffer(gl.ARRAY_BUFFER, null);
+
+    // 第一のシェーダプログラム
+    // attributeのデータを棒テクスチャに書き込み
     const sp1 = getShaderProgram(gl, 1, []);
     gl.useProgram(sp1);
-    // setAttributes(gl, sp1);
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
+    const loc = gl.getAttribLocation(sp1, 'original');
+    gl.enableVertexAttribArray(loc);
+    gl.vertexAttribPointer(loc, 1, gl.FLOAT, false, 0, 0);
+    gl.bindBuffer(gl.ARRAY_BUFFER, null);
+
     const fb = createFrameBuffer(gl);
-    const tx = createTexture(gl, width, height);
+    const tx = createTexture(gl, 4, 1);
+
     gl.bindFramebuffer(gl.FRAMEBUFFER, fb);
     gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, tx, 0);
-    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    gl.viewport(0, 0, 4, 1);
+    gl.drawArrays(gl.POINTS, 0, 4);
+    gl.viewport(0, 0, 500, 500);
     gl.bindFramebuffer(gl.FRAMEBUFFER, null);
 
-    // 上で作成したテクスチャを描画
-    const sp2 = getShaderProgram(gl, 2, []);
+    // 第二のシェーダプログラム
+    // 棒テクスチャのデータをTransformFeedbackバッファに書き込み
+    const sp2 = getShaderProgram(gl, 2, ['result']);
     gl.useProgram(sp2);
-    setAttributes(gl, sp2);
+
+    const vbo2 = gl.createBuffer();
+    const tf = gl.createTransformFeedback();
+    gl.bindBuffer(gl.ARRAY_BUFFER, vbo2);
+    gl.bufferData(gl.ARRAY_BUFFER, Float32Array.BYTES_PER_ELEMENT * 4, gl.DYNAMIC_COPY);
+    gl.bindBuffer(gl.ARRAY_BUFFER, null);
+    gl.bindTransformFeedback(gl.TRANSFORM_FEEDBACK, tf);
+    gl.bindBufferBase(gl.TRANSFORM_FEEDBACK_BUFFER, 0, vbo2);
+
+    gl.enable(gl.RASTERIZER_DISCARD);
+    gl.beginTransformFeedback(gl.POINTS);
     gl.bindTexture(gl.TEXTURE_2D, tx);
-    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    gl.drawArrays(gl.POINTS, 0, 4);
+    gl.endTransformFeedback();
+    gl.disable(gl.RASTERIZER_DISCARD);
+
+    // TransformFeedbackバッファからデータの読み出し＆consoleに表示
+    const result = new Float32Array(4);
+    gl.getBufferSubData(gl.TRANSFORM_FEEDBACK_BUFFER, 0, result);
+    console.log(result);
 };
 
 function createCanvas(parentElem: HTMLElement | null, width: number, height: number): HTMLCanvasElement {
@@ -74,7 +111,7 @@ function getShaderObject(gl: WebGLRenderingContext, type: number, shaderSource: 
     gl.compileShader(so);
     if (!gl.getShaderParameter(so, gl.COMPILE_STATUS)) {
         throw new Error('コンパイル失敗: ' + gl.getShaderInfoLog(so) +
-        ', shaderSource: ' + shaderSource);
+            ', shaderSource: ' + shaderSource);
     }
     return so;
 }

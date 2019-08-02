@@ -1,10 +1,9 @@
 #version 300 es
-out vec4 color;
-
-const vec3[4] pos = vec3[](vec3(1.0, 1.0, -1.0), vec3(-1.0, 1.0, 1.0),
-                           vec3(1.0, -1.0, 1.0), vec3(-1.0, -1.0, -1.0));
+in float original;
+out float data;
 
 void main(void) {
-  gl_Position = vec4(pos[gl_VertexID], 1.0);
-  color = gl_Position;
+  gl_Position = vec4(float(gl_VertexID) / 2.0 - 1.0 + 0.25, 0.0, 0.0, 1.0);
+  gl_PointSize = 1.0;
+  data = original;
 }
